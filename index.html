@@ -26,24 +26,45 @@
   // 背景板
   const canvas = document.getElementById('myCanvas')
   const ctx = canvas.getContext('2d')
+
+  // 球
+  let ballRadius = 10
+  let ballColor = '#90CAF9'
   let x = canvas.width / 2
   let y = canvas.height - 30
   let dx = 2
   let dy = - 2
 
-  // 球
-  let ballRadius = 10
-  let ballColor = '#90CAF9'
-
   // 板
   let paddleHeight = 10
   let paddleWidth = 75
-  let paddleX = (canvas.width - paddleWidth) / 2 // 板右侧的 x 坐标
+  let paddleX = (canvas.width - paddleWidth) / 2 // 板左侧的 x 坐标
   let paddleVelocity = 7
 
   // 用户操作
   let rightPressed = false
   let leftPressed = false
+
+  document.addEventListener('keydown', keyDownHandler, false) // 参数：事件名称、触发后执行的函数、是否在捕获或冒泡时执行（true 捕获时执行、false 冒泡时执行）
+  document.addEventListener('keyup', keyUpHandler, false)
+
+  // 按下方向键时
+  function keyDownHandler(e) {
+    if (e.keyCode === 39) {
+      rightPressed = true
+    } else if (e.keyCode === 37) {
+      leftPressed = true
+    }
+  }
+
+  // 抬起方向键时
+  function keyUpHandler(e) {
+    if (e.keyCode === 39) {
+      rightPressed = false
+    } else if (e.keyCode === 37) {
+      leftPressed = false
+    }
+  }
 
   // 绘球
   function drawBall(color) {
@@ -77,24 +98,6 @@
     return str
   }
 
-  // 按下方向键时
-  function keyDownHandler(e) {
-    if (e.keyCode === 39) {
-      rightPressed = true
-    } else if (e.keyCode === 37) {
-      leftPressed = true
-    }
-  }
-
-  // 抬起方向键时
-  function keyUpHandler(e) {
-    if (e.keyCode === 39) {
-      rightPressed = false
-    } else if (e.keyCode === 37) {
-      leftPressed = false
-    }
-  }
-
   // 改变板速度
   function changePaddleVelocity(b) { // true 加速， false 减速
     if (b) {
@@ -112,6 +115,8 @@
       paddleWidth = 50
     }
   }
+
+
   //绘全局
   function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height) // 清空画布，参数：矩形左上角 x、y 坐标，矩形右下角 x、y坐标
@@ -122,27 +127,28 @@
       dx = -dx
       ballColor = getRandomColor()
     }
-    if (y + dy > canvas.height - ballRadius || y + dy < ballRadius) {
+    if (y + dy < ballRadius) {
       dy = - dy
       ballColor = getRandomColor()
+    } else if (y + dy > canvas.height - ballRadius) {
+      if (x > paddleX && x < paddleX + paddleWidth) {
+        dy = - dy
+      } else {
+        alert('game over')
+        document.location.reload()
+      }
     }
-
-    x += dx
-    y += dy
-
-    // 额外功能测试
-    changePaddleVelocity(false)
-    changePaddleSize(false)
 
     if (rightPressed && paddleX < canvas.width - paddleWidth) {
       paddleX += paddleVelocity
     } else if (leftPressed && paddleX > 0) {
       paddleX -= paddleVelocity
     }
-  }
 
-  document.addEventListener('keydown', keyDownHandler, false) // 参数：事件名称、触发后执行的函数、是否在捕获或冒泡时执行（true 捕获时执行、false 冒泡时执行）
-  document.addEventListener('keyup', keyUpHandler, false)
+    x += dx
+    y += dy
+
+  }
 
   setInterval(draw, 10)
 
