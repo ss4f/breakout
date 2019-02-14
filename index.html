@@ -26,48 +26,80 @@
   const canvas = document.getElementById('myCanvas')
   const ctx = canvas.getContext('2d')
 
-  console.log(ctx)
+  // console.log(ctx)
 
-  // 建立一个矩形
-  ctx.beginPath() // 指令起始
-  ctx.rect(20, 40, 50, 50) // 参数：左上角点的 x、y 轴坐标，矩形的宽、高
-  ctx.fillStyle = '#5C6BC0' // 填充颜色
-  ctx.fill() // 生成实心图形
-  ctx.closePath() // 指令结束
+  // // 建立一个矩形
+  // ctx.beginPath() // 指令起始
+  // ctx.rect(20, 40, 50, 50) // 参数：左上角点的 x、y 轴坐标，矩形的宽、高
+  // ctx.fillStyle = '#5C6BC0' // 填充颜色
+  // ctx.fill() // 生成实心图形
+  // ctx.closePath() // 指令结束
 
-  ctx.beginPath()
-  ctx.arc(194, 34, 20, 0, Math.PI, true) // 参数：圆心的 x、y 轴坐标，半径，起始角度（以弧度计），结束角度（以弧度计），默认 false 顺时针、 true 为逆时针
-  ctx.fillStyle = 'indigo'
-  ctx.fill()
-  ctx.closePath()
+  // ctx.beginPath()
+  // ctx.arc(194, 34, 20, 0, Math.PI, true) // 参数：圆心的 x、y 轴坐标，半径，起始角度（以弧度计），结束角度（以弧度计），默认 false 顺时针、 true 为逆时针
+  // ctx.fillStyle = 'indigo'
+  // ctx.fill()
+  // ctx.closePath()
 
-  ctx.beginPath()
-  ctx.rect(209, 94, 93, 28)
-  ctx.strokeStyle = 'rgba(69, 90, 100,0.6)'
-  ctx.stroke() // 绘制路径（空心）
-  ctx.closePath()
+  // ctx.beginPath()
+  // ctx.rect(209, 94, 93, 28)
+  // ctx.strokeStyle = 'rgba(69, 90, 100,0.6)'
+  // ctx.stroke() // 绘制路径（空心）
+  // ctx.closePath()
 
   let x = canvas.width / 2
   let y = canvas.height - 30
   let dx = 2
   let dy = - 2
 
-  function drawBall() {
+  let ballRadius = 10
+  let myColor = '#90CAF9'
+
+  function drawBall(color) {
     ctx.beginPath()
-    ctx.arc(x, y, 10, 0, Math.PI * 2)
-    ctx.fillStyle = '0095DD'
+    ctx.arc(x, y, ballRadius, 0, Math.PI * 2)
+    ctx.fillStyle = color
     ctx.fill()
     ctx.closePath()
   }
 
   function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height) // 清空画布，参数：矩形左上角 x、y 坐标，矩形右下角 x、y坐标
-    drawBall()
+    drawBall(myColor)
+
+    if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
+      dx = -dx
+      myColor = '#' + getRandomColor()
+    }
+    if (y + dy > canvas.height - ballRadius || y + dy < ballRadius) {
+      dy = - dy
+      myColor = '#' + getRandomColor()
+    }
+
     x += dx
     y += dy
   }
 
   setInterval(draw, 10)
+
+  function getRandomColor() {
+    const arr = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'a', 'b', 'c', 'd', 'e', 'f']
+    let str = ''
+
+    for (let i = 0; i < 6; i++) {
+      let pos = Math.round(Math.random() * (arr.length - 1))
+      str += arr[pos]
+    }
+    return str
+  }
+
+  function changeColor() {
+    ctx.beginPath()
+    ctx.arc(x, y, ballRadius, 0, Math.PI * 2)
+    ctx.fillStyle = '#' + randomColor()
+    ctx.fill()
+    ctx.closePath()
+  }
 </script>
 
 </html>
