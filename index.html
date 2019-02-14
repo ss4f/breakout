@@ -37,7 +37,7 @@
 
   // 板
   let paddleHeight = 10
-  let paddleWidth = 300 // 75
+  let paddleWidth = 75
   let paddleX = (canvas.width - paddleWidth) / 2 // 板左侧的 x 坐标
   let paddleVelocity = 7
 
@@ -68,9 +68,11 @@
 
   document.addEventListener('keydown', keyDownHandler, false) // 参数：事件名称、触发后执行的函数、是否在捕获或冒泡时执行（true 捕获时执行、false 冒泡时执行）
   document.addEventListener('keyup', keyUpHandler, false)
+  document.addEventListener('mousemove', mouseMoveHandler, false)
 
   // 按下方向键时
   function keyDownHandler(e) {
+    console.log(e)
     if (e.keyCode === 39) {
       rightPressed = true
     } else if (e.keyCode === 37) {
@@ -84,6 +86,14 @@
       rightPressed = false
     } else if (e.keyCode === 37) {
       leftPressed = false
+    }
+  }
+
+  // 鼠标
+  function mouseMoveHandler(e) {
+    let relativeX = e.clientX - canvas.offsetLeft
+    if (relativeX > 0 && relativeX < canvas.width) {
+      paddleX = relativeX - paddleWidth / 2
     }
   }
 
@@ -177,8 +187,9 @@
             ballColor = getRandomColor()
             score++
             if (score === brickRowCount * brickColumnCount) {
-              alert('congratulations, your score is ' + score)
+              alert('congratulations, your score is: ' + score)
               document.location.reload()
+              clearInterval(interval)
             }
           }
         }
@@ -213,8 +224,9 @@
         // 额外测试
         // changeBallVelocity(true)
       } else {
-        alert('game over, your score is' + score)
+        alert('game over, your score is: ' + score)
         document.location.reload()
+        clearInterval(interval)
       }
     }
 
@@ -229,7 +241,7 @@
 
   }
 
-  setInterval(draw, 10)
+  const interval = setInterval(draw, 10)
 
 </script>
 
