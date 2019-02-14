@@ -23,38 +23,29 @@
 </body>
 
 <script>
+  // 背景板
   const canvas = document.getElementById('myCanvas')
   const ctx = canvas.getContext('2d')
-
-  // console.log(ctx)
-
-  // // 建立一个矩形
-  // ctx.beginPath() // 指令起始
-  // ctx.rect(20, 40, 50, 50) // 参数：左上角点的 x、y 轴坐标，矩形的宽、高
-  // ctx.fillStyle = '#5C6BC0' // 填充颜色
-  // ctx.fill() // 生成实心图形
-  // ctx.closePath() // 指令结束
-
-  // ctx.beginPath()
-  // ctx.arc(194, 34, 20, 0, Math.PI, true) // 参数：圆心的 x、y 轴坐标，半径，起始角度（以弧度计），结束角度（以弧度计），默认 false 顺时针、 true 为逆时针
-  // ctx.fillStyle = 'indigo'
-  // ctx.fill()
-  // ctx.closePath()
-
-  // ctx.beginPath()
-  // ctx.rect(209, 94, 93, 28)
-  // ctx.strokeStyle = 'rgba(69, 90, 100,0.6)'
-  // ctx.stroke() // 绘制路径（空心）
-  // ctx.closePath()
-
   let x = canvas.width / 2
   let y = canvas.height - 30
   let dx = 2
   let dy = - 2
 
+  // 球
   let ballRadius = 10
-  let myColor = '#90CAF9'
+  let ballColor = '#90CAF9'
 
+  // 板
+  let paddleHeight = 10
+  let paddleWidth = 75
+  let paddleX = (canvas.width - paddleWidth) / 2 // 板右侧的 x 坐标
+  let paddleVelocity = 7
+
+  // 用户操作
+  let rightPressed = false
+  let leftPressed = false
+
+  // 绘球
   function drawBall(color) {
     ctx.beginPath()
     ctx.arc(x, y, ballRadius, 0, Math.PI * 2)
@@ -63,25 +54,16 @@
     ctx.closePath()
   }
 
-  function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height) // 清空画布，参数：矩形左上角 x、y 坐标，矩形右下角 x、y坐标
-    drawBall(myColor)
-
-    if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
-      dx = -dx
-      myColor = '#' + getRandomColor()
-    }
-    if (y + dy > canvas.height - ballRadius || y + dy < ballRadius) {
-      dy = - dy
-      myColor = '#' + getRandomColor()
-    }
-
-    x += dx
-    y += dy
+  //绘板
+  function drawPaddle() {
+    ctx.beginPath()
+    ctx.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight)
+    ctx.fillStyle = '#0095dd'
+    ctx.fill()
+    ctx.closePath()
   }
 
-  setInterval(draw, 10)
-
+  // 获取随机颜色
   function getRandomColor() {
     const arr = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'a', 'b', 'c', 'd', 'e', 'f']
     let str = ''
@@ -90,16 +72,80 @@
       let pos = Math.round(Math.random() * (arr.length - 1))
       str += arr[pos]
     }
+
+    str = '#' + str
     return str
   }
 
-  function changeColor() {
-    ctx.beginPath()
-    ctx.arc(x, y, ballRadius, 0, Math.PI * 2)
-    ctx.fillStyle = '#' + randomColor()
-    ctx.fill()
-    ctx.closePath()
+  // 按下方向键时
+  function keyDownHandler(e) {
+    if (e.keyCode === 39) {
+      rightPressed = true
+    } else if (e.keyCode === 37) {
+      leftPressed = true
+    }
   }
+
+  // 抬起方向键时
+  function keyUpHandler(e) {
+    if (e.keyCode === 39) {
+      rightPressed = false
+    } else if (e.keyCode === 37) {
+      leftPressed = false
+    }
+  }
+
+  // 改变板速度
+  function changePaddleVelocity(b) { // true 加速， false 减速
+    if (b) {
+      paddleVelocity = 12
+    } else {
+      paddleVelocity = 1
+    }
+  }
+
+  // 改变板大小
+  function changePaddleSize(b) { // true 加长， false 缩小
+    if (b) {
+      paddleWidth = 200
+    } else {
+      paddleWidth = 50
+    }
+  }
+  //绘全局
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height) // 清空画布，参数：矩形左上角 x、y 坐标，矩形右下角 x、y坐标
+    drawBall(ballColor)
+    drawPaddle()
+
+    if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
+      dx = -dx
+      ballColor = getRandomColor()
+    }
+    if (y + dy > canvas.height - ballRadius || y + dy < ballRadius) {
+      dy = - dy
+      ballColor = getRandomColor()
+    }
+
+    x += dx
+    y += dy
+
+    // 额外功能测试
+    changePaddleVelocity(false)
+    changePaddleSize(false)
+
+    if (rightPressed && paddleX < canvas.width - paddleWidth) {
+      paddleX += paddleVelocity
+    } else if (leftPressed && paddleX > 0) {
+      paddleX -= paddleVelocity
+    }
+  }
+
+  document.addEventListener('keydown', keyDownHandler, false) // 参数：事件名称、触发后执行的函数、是否在捕获或冒泡时执行（true 捕获时执行、false 冒泡时执行）
+  document.addEventListener('keyup', keyUpHandler, false)
+
+  setInterval(draw, 10)
+
 </script>
 
 </html>
