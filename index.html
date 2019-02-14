@@ -94,6 +94,10 @@
     let relativeX = e.clientX - canvas.offsetLeft
     if (relativeX > 0 && relativeX < canvas.width) {
       paddleX = relativeX - paddleWidth / 2
+    } else if (relativeX < 0) {
+      paddleX = 0
+    } else if (relativeX > canvas.width - paddleWidth) {
+      paddleX = canvas.width - paddleWidth
     }
   }
 
