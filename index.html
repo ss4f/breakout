@@ -37,7 +37,7 @@
 
   // 板
   let paddleHeight = 10
-  let paddleWidth = 75
+  let paddleWidth = 300 // 75
   let paddleX = (canvas.width - paddleWidth) / 2 // 板左侧的 x 坐标
   let paddleVelocity = 7
 
@@ -54,7 +54,7 @@
   let brickOffsetTop = 30
   let brickOffsetLeft = 30
 
-  // 二维数组
+  // 砖的二维数组
   let bricks = []
   for (c = 0; c < brickColumnCount; c++) {
     bricks[c] = []
@@ -62,6 +62,9 @@
       bricks[c][r] = { x: 0, y: 0, status: 1 }
     }
   }
+
+  // 计分
+  let score = 0
 
   document.addEventListener('keydown', keyDownHandler, false) // 参数：事件名称、触发后执行的函数、是否在捕获或冒泡时执行（true 捕获时执行、false 冒泡时执行）
   document.addEventListener('keyup', keyUpHandler, false)
@@ -172,10 +175,22 @@
             dy = -dy
             b.status = 0
             ballColor = getRandomColor()
+            score++
+            if (score === brickRowCount * brickColumnCount) {
+              alert('congratulations, your score is ' + score)
+              document.location.reload()
+            }
           }
         }
       }
     }
+  }
+
+  // 显示得分
+  function drawScore() {
+    ctx.font = '16px Arial'
+    ctx.fillStyle = '#37474F'
+    ctx.fillText('Score: ' + score, 8, 20) // 参数: 绘制的文本、文本的 x、y 轴坐标
   }
 
   //绘全局
@@ -184,6 +199,7 @@
     drawBricks()
     drawBall(ballColor)
     drawPaddle()
+    drawScore()
     collisionDetection()
 
     if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
@@ -197,7 +213,7 @@
         // 额外测试
         // changeBallVelocity(true)
       } else {
-        alert('game over')
+        alert('game over, your score is' + score)
         document.location.reload()
       }
     }
